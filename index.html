@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Weather App</title><link rel="manifest" href="manifest.json">
+  <title>Weather App</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f5f5f5">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -15,103 +17,157 @@
       align-items: flex-start;
       padding: 30px 16px;
       transition: background 1s ease;
-      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      background: #f0f2f5;
     }
 
-    body.clear { background: linear-gradient(135deg, #f7971e, #ffd200, #f7971e); }
-    body.clouds { background: linear-gradient(135deg, #4b6cb7, #182848); }
-    body.rain, body.drizzle { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
-    body.thunderstorm { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
-    body.snow { background: linear-gradient(135deg, #e0eafc, #cfdef3); }
-    body.night { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
+    body.clear { background: linear-gradient(135deg, #fff9e6, #fff3cc); }
+    body.clouds { background: linear-gradient(135deg, #e8edf2, #d5dde6); }
+    body.rain, body.drizzle { background: linear-gradient(135deg, #dde6f0, #c5d5e8); }
+    body.thunderstorm { background: linear-gradient(135deg, #d0d8e4, #b8c5d6); }
+    body.snow { background: linear-gradient(135deg, #eef4fb, #ddeaf8); }
+    body.night { background: linear-gradient(135deg, #1a1a2e, #16213e); }
 
     .card {
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(12px);
+      background: white;
       border-radius: 24px;
       padding: 30px;
       width: 100%;
       max-width: 420px;
       text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      color: white;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      color: #1a1a1a;
     }
 
-    h1 { font-size: 22px; margin-bottom: 16px; }
+    h1 { font-size: 22px; margin-bottom: 16px; color: #333; }
 
     .search { display: flex; gap: 10px; margin-bottom: 10px; }
     .search input {
-      flex: 1; padding: 11px 14px; border: none; border-radius: 10px;
-      background: rgba(255,255,255,0.2); color: white; font-size: 15px; outline: none;
+      flex: 1; padding: 11px 14px; border: 1px solid #e0e0e0; border-radius: 10px;
+      background: #f8f8f8; color: #333; font-size: 15px; outline: none;
     }
-    .search input::placeholder { color: rgba(255,255,255,0.6); }
+    .search input::placeholder { color: #aaa; }
+    .search input:focus { border-color: #4a9eff; background: white; }
     .search button {
-      padding: 11px 14px; background: #e94560; border: none;
+      padding: 11px 14px; background: #4a9eff; border: none;
       border-radius: 10px; color: white; font-size: 15px; cursor: pointer;
     }
+    .search button:hover { background: #2d8af0; }
 
     .locate-btn {
-      width: 100%; padding: 9px; background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3); border-radius: 10px;
-      color: white; font-size: 13px; cursor: pointer; margin-bottom: 12px;
+      width: 100%; padding: 9px; background: #f0f7ff;
+      border: 1px solid #cce0ff; border-radius: 10px;
+      color: #4a9eff; font-size: 13px; cursor: pointer; margin-bottom: 12px;
     }
-    .locate-btn:hover { background: rgba(255,255,255,0.25); }
+    .locate-btn:hover { background: #e0f0ff; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; justify-content: center; }
     .chip {
-      background: rgba(255,255,255,0.15); border: none; border-radius: 20px;
-      color: white; padding: 4px 12px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;
+      background: #f0f7ff; border: 1px solid #cce0ff;
+      border-radius: 20px; color: #4a9eff; padding: 4px 12px;
+      font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;
     }
-    .chip:hover { background: rgba(255,255,255,0.3); }
+    .chip:hover { background: #e0f0ff; }
     .chip .del { opacity: 0.6; font-size: 11px; }
-    .section-label { font-size: 11px; opacity: 0.6; margin-bottom: 6px; text-align: left; }
+    .section-label { font-size: 11px; color: #aaa; margin-bottom: 6px; text-align: left; }
 
     .weather-icon { font-size: 68px; margin: 6px 0; }
-    .temp { font-size: 58px; font-weight: bold; }
-    .desc { font-size: 17px; margin: 5px 0; text-transform: capitalize; }
-    .city-time { font-size: 14px; opacity: 0.85; margin-bottom: 4px; }
-    .local-time { font-size: 13px; opacity: 0.7; margin-bottom: 14px; }
+    .temp { font-size: 58px; font-weight: bold; color: #1a1a1a; }
+    .desc { font-size: 17px; margin: 5px 0; text-transform: capitalize; color: #555; }
+    .city-time { font-size: 14px; color: #555; margin-bottom: 4px; }
+    .local-time { font-size: 13px; color: #aaa; margin-bottom: 14px; }
 
     .details {
       display: flex; justify-content: space-around;
-      background: rgba(255,255,255,0.1); border-radius: 12px;
+      background: #f8f8f8; border-radius: 12px;
       padding: 12px; margin-bottom: 10px;
+      border: 1px solid #eee;
     }
-    .detail-item { font-size: 12px; }
-    .detail-item span { display: block; font-size: 17px; font-weight: bold; }
+    .detail-item { font-size: 12px; color: #888; }
+    .detail-item span { display: block; font-size: 17px; font-weight: bold; color: #333; }
 
     .sun-info {
       display: flex; justify-content: space-around;
-      background: rgba(255,255,255,0.1); border-radius: 12px;
+      background: #f8f8f8; border-radius: 12px;
       padding: 12px; margin-bottom: 10px; font-size: 12px;
+      border: 1px solid #eee; color: #888;
     }
-    .sun-info div span { display: block; font-size: 16px; font-weight: bold; }
+    .sun-info div span { display: block; font-size: 16px; font-weight: bold; color: #333; }
 
     .aqi-box {
-      background: rgba(255,255,255,0.1); border-radius: 12px;
+      background: #f8f8f8; border-radius: 12px;
       padding: 12px; margin-bottom: 10px; font-size: 12px;
+      border: 1px solid #eee; color: #888;
     }
-    .aqi-value { font-size: 22px; font-weight: bold; margin: 4px 0; }
-    .aqi-bar { height: 8px; border-radius: 4px; margin: 6px 0; }
+    .aqi-value { font-size: 22px; font-weight: bold; margin: 4px 0; color: #333; }
+    .aqi-bar { height: 8px; border-radius: 4px; margin: 6px 0; background: #eee; }
+
+    /* Fitur baru */
+    .info-box {
+      border-radius: 12px; padding: 12px; margin-bottom: 10px;
+      font-size: 13px; text-align: left; border: 1px solid #eee;
+      background: #f8f8f8;
+    }
+    .info-box-title { font-weight: bold; font-size: 13px; margin-bottom: 8px; color: #333; }
+    .info-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; color: #555; line-height: 1.4; }
+    .info-row:last-child { margin-bottom: 0; }
+
+    .rain-hours { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-top: 6px; }
+    .rain-hour {
+      background: white; border-radius: 8px; padding: 6px 10px;
+      font-size: 11px; flex-shrink: 0; border: 1px solid #eee; text-align: center; color: #555;
+    }
+    .rain-hour .rh-time { font-weight: bold; color: #333; }
+    .rain-hour .rh-icon { font-size: 16px; }
+    .rain-hour.will-rain { background: #e8f4ff; border-color: #cce0ff; }
+
+    .golden-hour-box { display: flex; justify-content: space-around; }
+    .golden-item { text-align: center; }
+    .golden-item .g-label { font-size: 11px; color: #aaa; }
+    .golden-item .g-time { font-size: 15px; font-weight: bold; color: #ff9800; }
+    .golden-item .g-duration { font-size: 11px; color: #aaa; }
 
     .forecast { margin-top: 4px; }
-    .forecast h3 { font-size: 13px; opacity: 0.8; margin-bottom: 8px; }
+    .forecast h3 { font-size: 13px; color: #888; margin-bottom: 8px; }
     .forecast-grid { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
     .forecast-item {
-      background: rgba(255,255,255,0.1); border-radius: 12px;
+      background: #f8f8f8; border-radius: 12px;
       padding: 10px 12px; min-width: 68px; font-size: 11px; flex-shrink: 0;
+      border: 1px solid #eee; color: #888;
     }
     .forecast-item .f-icon { font-size: 22px; }
-    .forecast-item .f-temp { font-weight: bold; font-size: 13px; margin-top: 3px; }
+    .forecast-item .f-temp { font-weight: bold; font-size: 13px; margin-top: 3px; color: #333; }
 
-    .error { color: #ff6b6b; margin-top: 8px; font-size: 13px; }
-    .loading { opacity: 0.7; font-size: 13px; margin-top: 8px; }
+    .error { color: #ff4444; margin-top: 8px; font-size: 13px; }
+    .loading { color: #aaa; font-size: 13px; margin-top: 8px; }
     .hidden { display: none; }
 
     .fav-btn {
-      background: none; border: none; color: white; font-size: 20px;
+      background: none; border: none; color: #333; font-size: 20px;
       cursor: pointer; margin-left: 6px; vertical-align: middle;
     }
+
+    body.night .card { background: #1e2740; color: white; }
+    body.night .temp { color: white; }
+    body.night .desc { color: #ccc; }
+    body.night .details, body.night .sun-info, body.night .aqi-box,
+    body.night .forecast-item, body.night .info-box, body.night .rain-hour {
+      background: #2a3555; border-color: #3a4a6a;
+    }
+    body.night .detail-item { color: #aaa; }
+    body.night .detail-item span { color: white; }
+    body.night .sun-info { color: #aaa; }
+    body.night .sun-info div span { color: white; }
+    body.night .aqi-value { color: white; }
+    body.night .forecast-item { color: #aaa; }
+    body.night .forecast-item .f-temp { color: white; }
+    body.night h1 { color: #7ecfff; }
+    body.night .city-time { color: #ccc; }
+    body.night .local-time { color: #aaa; }
+    body.night .fav-btn { color: white; }
+    body.night .info-box-title { color: #7ecfff; }
+    body.night .info-row { color: #ccc; }
+    body.night .rain-hour { color: #ccc; }
+    body.night .rain-hour .rh-time { color: white; }
   </style>
 </head>
 <body>
@@ -158,6 +214,25 @@
       <div>🌇 Terbenam<span id="sunset"></span></div>
     </div>
 
+    <!-- Saran Pakaian -->
+    <div class="info-box" id="clothingBox">
+      <div class="info-box-title">🧥 Saran Pakaian & Aktivitas</div>
+      <div id="clothingTips"></div>
+    </div>
+
+    <!-- Prediksi Hujan -->
+    <div class="info-box hidden" id="rainBox">
+      <div class="info-box-title">☔ Prediksi Hujan Hari Ini</div>
+      <div class="rain-hours" id="rainHours"></div>
+    </div>
+
+    <!-- Golden Hour -->
+    <div class="info-box" id="goldenBox">
+      <div class="info-box-title">🌅 Golden Hour (Waktu Foto Terbaik)</div>
+      <div class="golden-hour-box" id="goldenHour"></div>
+    </div>
+
+    <!-- AQI -->
     <div class="aqi-box hidden" id="aqiBox">
       <div>💨 Kualitas Udara (AQI)</div>
       <div class="aqi-value" id="aqiValue"></div>
@@ -184,14 +259,16 @@
     Snow: 'snow', Clear: 'clear', Clouds: 'clouds'
   };
   const aqiInfo = [
-    { label: 'Baik', color: '#00e400' },
-    { label: 'Sedang', color: '#ffff00' },
-    { label: 'Tidak Sehat (Sensitif)', color: '#ff7e00' },
-    { label: 'Tidak Sehat', color: '#ff0000' },
-    { label: 'Sangat Tidak Sehat', color: '#8f3f97' },
+    { label: 'Baik', color: '#00c853' },
+    { label: 'Sedang', color: '#ffd600' },
+    { label: 'Tidak Sehat (Sensitif)', color: '#ff6d00' },
+    { label: 'Tidak Sehat', color: '#dd2c00' },
+    { label: 'Sangat Tidak Sehat', color: '#6a1b9a' },
   ];
 
   let currentCity = '';
+  let currentLat = null;
+  let currentLon = null;
   let favs = JSON.parse(localStorage.getItem('favs') || '[]');
   let history = JSON.parse(localStorage.getItem('history') || '[]');
 
@@ -218,13 +295,11 @@
   function renderChips() {
     const favEl = document.getElementById('favChips');
     const histEl = document.getElementById('histChips');
-
     favEl.innerHTML = favs.map(c => `
       <button class="chip" onclick="searchCity('${c}')">❤️ ${c}
         <span class="del" onclick="event.stopPropagation();removeFav('${c}')">✕</span>
       </button>`).join('');
     document.getElementById('favSection').classList.toggle('hidden', favs.length === 0);
-
     histEl.innerHTML = history.map(c => `
       <button class="chip" onclick="searchCity('${c}')">🕐 ${c}
         <span class="del" onclick="event.stopPropagation();removeHist('${c}')">✕</span>
@@ -244,6 +319,61 @@
     return ['Min','Sen','Sel','Rab','Kam','Jum','Sab'][new Date(unix*1000).getDay()];
   }
 
+  function getClothingTips(temp, main, humidity, windSpeed, aqi) {
+    const tips = [];
+
+    if (temp >= 35) {
+      tips.push({ icon: '👕', text: 'Pakai baju tipis & terang, hindari warna gelap' });
+      tips.push({ icon: '🧴', text: 'Wajib pakai sunscreen SPF 50+' });
+      tips.push({ icon: '💧', text: 'Minum air lebih banyak, minimal 3 liter hari ini' });
+      tips.push({ icon: '🏃', text: 'Hindari olahraga di luar pukul 10-15' });
+    } else if (temp >= 30) {
+      tips.push({ icon: '👕', text: 'Pakai baju tipis & nyaman' });
+      tips.push({ icon: '🧴', text: 'Pakai sunscreen sebelum keluar' });
+      tips.push({ icon: '💧', text: 'Perbanyak minum air putih' });
+    } else if (temp >= 25) {
+      tips.push({ icon: '👔', text: 'Cuaca nyaman, pakai baju biasa' });
+      tips.push({ icon: '🏃', text: 'Waktu bagus untuk olahraga pagi/sore' });
+    } else if (temp >= 20) {
+      tips.push({ icon: '🧥', text: 'Pakai jaket tipis saat keluar malam' });
+      tips.push({ icon: '🌿', text: 'Cocok untuk aktivitas outdoor' });
+    } else {
+      tips.push({ icon: '🧥', text: 'Pakai jaket tebal, cuaca cukup dingin' });
+      tips.push({ icon: '☕', text: 'Waktu yang tepat untuk minuman hangat' });
+    }
+
+    if (main === 'Rain' || main === 'Drizzle' || main === 'Thunderstorm') {
+      tips.push({ icon: '☔', text: 'Bawa payung atau jas hujan' });
+      tips.push({ icon: '👟', text: 'Hindari sepatu kain/suede' });
+    }
+
+    if (windSpeed > 10) {
+      tips.push({ icon: '💨', text: 'Angin kencang, hati-hati berkendara' });
+    }
+
+    if (humidity > 80) {
+      tips.push({ icon: '😅', text: 'Kelembaban tinggi, akan terasa lebih panas' });
+    }
+
+    if (aqi && aqi >= 3) {
+      tips.push({ icon: '😷', text: 'Kualitas udara buruk, disarankan pakai masker' });
+    }
+
+    return tips;
+  }
+
+  function getGoldenHour(sunrise, sunset, timezone) {
+    const morningGolden = sunrise;
+    const morningEnd = sunrise + 3600;
+    const eveningGolden = sunset - 3600;
+    const eveningEnd = sunset;
+
+    return {
+      morning: { start: formatTime(morningGolden, timezone), end: formatTime(morningEnd, timezone) },
+      evening: { start: formatTime(eveningGolden, timezone), end: formatTime(eveningEnd, timezone) }
+    };
+  }
+
   async function fetchWeather(url) {
     const loading = document.getElementById('loading');
     const error = document.getElementById('error');
@@ -258,6 +388,8 @@
       const data = await res.json();
 
       currentCity = data.name;
+      currentLat = data.coord.lat;
+      currentLon = data.coord.lon;
       addHistory(currentCity);
 
       const main = data.weather[0].main;
@@ -282,19 +414,67 @@
 
       updateFavBtn();
 
+      // AQI
+      let aqiValue = null;
       try {
         const aqiRes = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${data.coord.lat}&lon=${data.coord.lon}&appid=${API_KEY}`);
         const aqiData = await aqiRes.json();
-        const aqi = aqiData.list[0].main.aqi;
-        const info = aqiInfo[aqi - 1];
-        document.getElementById('aqiValue').textContent = `${aqi} — ${info.label}`;
+        aqiValue = aqiData.list[0].main.aqi;
+        const info = aqiInfo[aqiValue - 1];
+        document.getElementById('aqiValue').textContent = `${aqiValue} — ${info.label}`;
         document.getElementById('aqiBar').style.background = info.color;
-        document.getElementById('aqiBar').style.width = `${aqi * 20}%`;
+        document.getElementById('aqiBar').style.width = `${aqiValue * 20}%`;
         document.getElementById('aqiBox').classList.remove('hidden');
       } catch { document.getElementById('aqiBox').classList.add('hidden'); }
 
+      // Saran Pakaian
+      const tips = getClothingTips(data.main.temp, main, data.main.humidity, data.wind.speed, aqiValue);
+      document.getElementById('clothingTips').innerHTML = tips.map(t =>
+        `<div class="info-row"><span>${t.icon}</span><span>${t.text}</span></div>`
+      ).join('');
+
+      // Golden Hour
+      const golden = getGoldenHour(data.sys.sunrise, data.sys.sunset, data.timezone);
+      document.getElementById('goldenHour').innerHTML = `
+        <div class="golden-item">
+          <div class="g-label">🌄 Pagi</div>
+          <div class="g-time">${golden.morning.start}</div>
+          <div class="g-duration">sampai ${golden.morning.end}</div>
+        </div>
+        <div class="golden-item">
+          <div class="g-label">🌇 Sore</div>
+          <div class="g-time">${golden.evening.start}</div>
+          <div class="g-duration">sampai ${golden.evening.end}</div>
+        </div>`;
+
+      // Forecast + Prediksi Hujan
       const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${data.name}&appid=${API_KEY}&units=metric&lang=id`);
       const fData = await fRes.json();
+
+      // Prediksi hujan hari ini
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayForecasts = fData.list.filter(item => {
+        const d = new Date(item.dt * 1000).toISOString().split('T')[0];
+        return d === todayStr;
+      });
+
+      if (todayForecasts.length > 0) {
+        const rainHtml = todayForecasts.map(item => {
+          const hour = new Date((item.dt + data.timezone) * 1000);
+          const timeStr = `${String(hour.getUTCHours()).padStart(2,'0')}:00`;
+          const willRain = ['Rain','Drizzle','Thunderstorm'].includes(item.weather[0].main);
+          const ico = icons[item.weather[0].main] || icons.default;
+          return `<div class="rain-hour ${willRain ? 'will-rain' : ''}">
+            <div class="rh-time">${timeStr}</div>
+            <div class="rh-icon">${ico}</div>
+            <div>${Math.round(item.main.temp)}°</div>
+          </div>`;
+        }).join('');
+        document.getElementById('rainHours').innerHTML = rainHtml;
+        document.getElementById('rainBox').classList.remove('hidden');
+      }
+
+      // Forecast 5 hari
       const seen = new Set();
       const forecasts = fData.list.filter(item => {
         const day = formatDay(item.dt);
@@ -346,6 +526,10 @@
   });
 
   renderChips();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
 </script>
 </body>
 </html>
